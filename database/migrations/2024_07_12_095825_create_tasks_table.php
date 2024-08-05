@@ -15,9 +15,11 @@ class CreateTasksTable extends Migration
             $table->date('due_date');
             $table->string('priority');
             $table->unsignedBigInteger('category_id')->nullable();
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
             
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

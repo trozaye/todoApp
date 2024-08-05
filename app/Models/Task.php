@@ -16,6 +16,7 @@ class Task extends Model
         'due_date',
         'priority',
         'category_id',
+        'user_id'
 ];
 
     public function category()

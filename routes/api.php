@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\TaskController;
-use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Api\CategoryController;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -29,11 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Delete a specific task
     Route::delete('tasks/{task}', [TaskController::class, 'destroy']);
-});
 
-Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('categories', [CategoryController::class, 'index']);
+    Route::get('categories-index', [CategoryController::class, 'index']);
     
     Route::get('categories/{category}', [CategoryController::class, 'show']);
     

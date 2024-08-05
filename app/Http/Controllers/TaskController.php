@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\TaskController;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::all();
-        $categories = Category::all();
+        // Only get tasks and categories for the authenticated user
+        $tasks = Auth::user()->tasks;
+        $categories = Auth::user()->categories;
         return view('task', compact('tasks', 'categories'));
     }
 
@@ -32,6 +32,7 @@ class TaskController extends Controller
             'due_date' => $request->due_date,
             'priority' => $request->priority,
             'category_id' => $request->category_id,
+            'user_id' => Auth::id(), // Assign the authenticated user ID
         ]);
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
@@ -47,6 +48,11 @@ class TaskController extends Controller
             'category_id' => 'nullable|exists:categories,id',
         ]);
 
+        // Ensure the task belongs to the authenticated user
+        if ($task->user_id !== Auth::id()) {
+            return redirect()->route('tasks.index')->with('error', 'Unauthorized action.');
+        }
+
         $task->update([
             'name' => $request->name,
             'description' => $request->description,
@@ -60,6 +66,11 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
+        // Ensure the task belongs to the authenticated user
+        if ($task->user_id !== Auth::id()) {
+            return redirect()->route('tasks.index')->with('error', 'Unauthorized action.');
+        }
+
         $task->delete();
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
     }
